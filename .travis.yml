@@ -57,6 +57,13 @@ before_script:
 script:
   - bundle exec rake assets:precompile
   - bundle exec rspec
+after_success:
+  - docker build -f Dockerfile.development . --tag ${TRAVIS_REPO_SLUG}-dev:latest
+  - docker build . --tag ${TRAVIS_REPO_SLUG}:latest
+  - docker images
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+  - docker push ${TRAVIS_REPO_SLUG}-dev:latest
+  - docker push ${TRAVIS_REPO_SLUG}:latest
 notifications:
   email:
     recipients:
