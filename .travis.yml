@@ -36,7 +36,6 @@ env:
 services:
   - postgresql
 before_install:
-  - docker build -f Dockerfile.development . --tag ${TRAVIS_REPO_SLUG}-dev:latest
   - docker build -f Dockerfile . --tag ${TRAVIS_REPO_SLUG}:latest
   - nvm install node
   - curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.7.0

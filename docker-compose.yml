@@ -1,0 +1,39 @@
+#
+# docker-compose targets development only
+#
+version: "2"
+services:
+  app:
+    image: jhpoelen/taxonworks-base-dev
+    build: 
+      context: .
+      dockerfile: Dockerfile.development
+    volumes: # mount root directory from this machine to the container itself (live development, e.g. Rails sees changes to files without rebuilding container0
+      - .:/app
+    ports: 
+      - "127.0.0.1:3000:3000" # local:docker
+    links:
+      - db
+    stdin_open: true
+    tty: true
+  db:
+    image: mdillon/postgis:9.5
+    ports: 
+      - "0.0.0.0:15432:5432"
+    volumes:
+      - pg:/var/lib/postgresql/data
+  webpack:
+    image: jhpoelen/taxonworks-dev
+    build:
+      context: .
+      dockerfile: Dockerfile.development
+    command: bash -c "npm install && /app/bin/webpack-dev-server --host 0.0.0.0"
+    volumes: 
+      - .:/app
+      - ./volumes/webpack_build:/mnt/rails/public/webpack
+    ports:
+      - '3808:3808'
+volumes:
+    pg:
+      external: false
+
