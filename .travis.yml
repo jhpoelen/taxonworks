@@ -36,9 +36,9 @@ env:
 services:
   - postgresql
 before_install:
-  - .travis.build.image.sh
+  - ./.travis.build.image.sh
 script:
-  - .travis.test.in.container.sh
+  - ./.travis.test.in.container.sh
 after_success:
   - docker images
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
