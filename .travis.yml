@@ -38,7 +38,7 @@ services:
 before_install:
   - ./.travis.build.image.sh
 script:
-  - docker run --name "test-container" "${TRAVIS_REPO_SLUG}:${TRAVIS_BRANCH}" "/bin/bash -c" < .travis.test.in.container.sh
+  - docker run --rm "${TRAVIS_REPO_SLUG}:${TRAVIS_BRANCH}" /bin/bash -s < .travis.test.in.container.sh
 after_success:
   - docker images
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
