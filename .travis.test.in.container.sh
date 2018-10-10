@@ -1,4 +1,6 @@
 #!/bin/bash
+set -x
+set -e
 nvm install node
 curl -o- -L https://yarnpkg.com/install.sh | bash -s -- --version 1.7.0
 export PATH=$HOME/.yarn/bin:$PATH
