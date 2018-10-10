@@ -1,9 +1,10 @@
 #!/bin/bash
 set -x
 set -e
-"export DISPLAY=:99.0"
-"/sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1600x1200x16"
-sleep 3
+#apt -y install xvfb firefox 
+#export DISPLAY=:99.0
+#/sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1600x1200x16
+#sleep 3
 cp config/database.yml.travis config/database.yml
 cp config/secrets.yml.example config/secrets.yml
 mkdir tmp/
