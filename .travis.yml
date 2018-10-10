@@ -43,7 +43,7 @@ before_script:
   - "/sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1600x1200x16"
   - sleep 3
 script:
-  - docker run --workdir /app -v $PWD/.travis.test.in.container.sh:/app/test.sh --rm "${TRAVIS_REPO_SLUG}:${TRAVIS_BRANCH}" sh -c "/app/test.sh" 
+  - docker run --workdir /app -v $PWD/.travis.test.in.container.sh:/app/test.sh -v /var/run/postgresql/.s.PGSQL.5433:/var/run/postgresql/.s.PGSQL.5433 --rm "${TRAVIS_REPO_SLUG}:${TRAVIS_BRANCH}" sh -c "/app/test.sh" 
 after_success:
   - docker images
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
