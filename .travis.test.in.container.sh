@@ -7,8 +7,8 @@ set -e
 #sleep 3
 cp config/database.yml.travis config/database.yml
 cp config/secrets.yml.example config/secrets.yml
-mkdir tmp/
-mkdir tmp/downloads
+mkdir -p tmp/
+mkdir -p tmp/downloads
 bundle exec rake db:create RAILS_ENV=test # database user by default is `travis` 
 bundle exec rake db:migrate RAILS_ENV=test
 ls -alh bin 
