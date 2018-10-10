@@ -35,7 +35,8 @@ env:
     - PGPORT=5433
 services:
   - postgresql
-before_install:
+# override default ruby install (e.g., bundler install ...) to avoid installing outside of container
+install:
   - ./.travis.build.image.sh
 before_script:
   - "export DISPLAY=:99.0"
