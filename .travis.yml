@@ -1,16 +1,16 @@
-language: ruby 
-cache:
-  bundler: true
-  directories:
-    - $TRAVIS_BUILD_DIR/node_modules
-    - $TRAVIS_BUILD_DIR/spec/fixtures/vcr_cassettes
-    - $TRAVIS_BUILD_DIR/public/packs-test
-    - /home/travis/.rvm/ 
-dist: trusty
+#language: ruby 
+#cache:
+  #bundler: true
+  #directories:
+  #  - $TRAVIS_BUILD_DIR/node_modules
+  #  - $TRAVIS_BUILD_DIR/spec/fixtures/vcr_cassettes
+  #  - $TRAVIS_BUILD_DIR/public/packs-test
+  #  - /home/travis/.rvm/ 
+#dist: trusty
 # sudo: required
 #rvm:
 #  - 2.5.1
-bundler_args: --without development production
+#bundler_args: --without development production
 branches:
   only:
     - master
