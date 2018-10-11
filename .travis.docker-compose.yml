@@ -1,22 +1,29 @@
 #
 # docker-compose targets development only
 #
-version: "2"
+version: "2.1"
 services:
   app:
-    image: jhpoelen/taxonworks:development
+    image: jhpoelen/taxonworks:base
     volumes: # mount root directory from this machine to the container itself (live development, e.g. Rails sees changes to files without rebuilding container0
-      - ./.travis.test.in.container:/app/test.sh
+      - ./.travis.test.in.container.sh:/app/test.sh
+      - ./spec:/app/spec
       - ./config/database.yml.docker.compose.example:/app/config/database.yml
+      - ./config/secrets.yml.example:/app/config/secrets.yml
     ports: 
       - "127.0.0.1:3000:3000" # local:docker
+    depends_on:
+      db:
+        condition: service_healthy
     links:
       - db
-    stdin_open: true
     working_dir: /app
     command:
       - /app/test.sh
   db:
     image: mdillon/postgis:10
-    ports: 
-      - "0.0.0.0:15432:5432"
+    ports:
+     - "5432:5432"
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+      retries: 3

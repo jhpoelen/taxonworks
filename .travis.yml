@@ -18,23 +18,9 @@ branches:
     - rails52
     - digitize
 addons:
-  postgresql: "10"
   firefox: "latest"
   apt:
     update: true 
-    packages:
-      - libgeos-dev
-      - libproj-dev
-      - postgresql-10-postgis-2.4
-      - postgresql-10-postgis-2.4-scripts
-      - postgresql-10
-      - postgresql-client-10
-      - postgresql-contrib-10
-env:
-  global:
-    - PGPORT=5433
-services:
-  - postgresql
 # override default ruby install (e.g., bundler install ...) to avoid installing outside of container
 install:
   - ./.travis.build.image.sh
@@ -43,7 +29,7 @@ before_script:
   - "/sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1600x1200x16"
   - sleep 3
 script:
-  - docker-compose -f .travis.docker-compose.yml up 
+  - sudo docker-compose -f .travis.docker-compose.yml up --force-recreate --abort-on-container-exit --exit-code-from app --renew-anon-volumes 
 after_success:
   - docker images
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin

@@ -1,33 +1,13 @@
-# 
-# Production configured for kubernetes.
 #
-# development/test here not verified to work in kubernetes
+# This is for docker-compose testing configuration only.
 #
-#
-development:
-  adapter: postgis
-  encoding: utf8 
-  postgis_extension: true
-  pool: 5
-  database: taxonworks_development 
-  username: taxonworks_development
-  password:
-#  host: db
 test: 
   adapter: postgis
   encoding: utf8 
   postgis_extension: true
   pool: 5
-  database: taxonworks_test
-  username: taxonworks_test 
+  database: taxonworks_test<%= ENV['TEST_ENV_NUMBER'] %>
+  username: postgres 
   password:
-#  host: db
-production:
-  adapter: postgis
-  encoding: utf8 
-  postgis_extension: true
-  pool: 5
-  host: 
-  database: 
-  username: 
-  password: 
+  host: db
+  port: 5432
