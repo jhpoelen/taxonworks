@@ -1,41 +1,16 @@
-#language: ruby 
-#cache:
-  #bundler: true
-  #directories:
-  #  - $TRAVIS_BUILD_DIR/node_modules
-  #  - $TRAVIS_BUILD_DIR/spec/fixtures/vcr_cassettes
-  #  - $TRAVIS_BUILD_DIR/public/packs-test
-  #  - /home/travis/.rvm/ 
-#dist: trusty
-# sudo: required
-#rvm:
-#  - 2.5.1
-#bundler_args: --without development production
+sudo: required
 branches:
   only:
     - master
     - development
     - rails52
     - digitize
-addons:
-  firefox: "latest"
-  apt:
-    update: true 
 # override default ruby install (e.g., bundler install ...) to avoid installing outside of container
 install:
   - ./.travis.build.image.sh
-before_script:
-  - "export DISPLAY=:99.0"
-  - "/sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1600x1200x16"
-  - sleep 3
 script:
   - docker-compose -f .travis.docker-compose.yml up --force-recreate --abort-on-container-exit --exit-code-from app --renew-anon-volumes 
 after_success:
   - docker images
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
   - docker push ${TRAVIS_REPO_SLUG}:${TRAVIS_BRANCH}
-#notifications:
-#  email:
-#    recipients:
-#      - diapriid@gmail.com
-#    on_failure: change
