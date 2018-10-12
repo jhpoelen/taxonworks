@@ -1,5 +1,5 @@
 #
-# docker-compose targets development only
+# targets testing only
 #
 version: "2.1"
 services:

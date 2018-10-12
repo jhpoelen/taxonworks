@@ -1,10 +1,12 @@
 #!/bin/bash
 set -x
 set -e
-#apt -y install xvfb firefox 
-#export DISPLAY=:99.0
-#/sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1600x1200x16
-#sleep 3
+
+# attempt to install firefox and X virtual framebuffer for headless ui testing
+apt -y install xvfb firefox 
+export DISPLAY=:99.0
+/sbin/start-stop-daemon --start --quiet --pidfile /tmp/custom_xvfb_99.pid --make-pidfile --background --exec /usr/bin/Xvfb -- :99 -ac -screen 0 1600x1200x16
+
 cat config/database.yml
 cat config/secrets.yml
 cat Gemfile.lock
