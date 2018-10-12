@@ -1,4 +1,6 @@
 sudo: required
+env:
+  - DOCKER_COMPOSE_VERSION=1.22.0
 branches:
   only:
     - master
@@ -6,6 +8,11 @@ branches:
     - rails52
     - digitize
 # override default ruby install (e.g., bundler install ...) to avoid installing outside of container
+before_install:
+  - sudo rm /usr/local/bin/docker-compose
+  - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
+  - chmod +x docker-compose
+  - sudo mv docker-compose /usr/local/bin
 install:
   - ./.travis.build.image.sh
 script:
