@@ -9,6 +9,7 @@ branches:
 install:
   - ./.travis.build.image.sh
 script:
+  - docker-compose --version
   - docker-compose -f .travis.docker-compose.yml up --force-recreate --abort-on-container-exit --exit-code-from app --renew-anon-volumes 
 after_success:
   - docker images
