@@ -13,14 +13,15 @@ before_install:
   - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
   - chmod +x docker-compose
   - sudo mv docker-compose /usr/local/bin
-  - docker pull ${TRAVIS_REPO_SLUG}:base || true # attempt to retrieve cached images
-  - docker pull ${TRAVIS_REPO_SLUG}:base-test || true  # attempt to retrieve cached images
+  - docker pull ${TRAVIS_REPO_SLUG}:deps || true # attempt to retrieve cached image with dependencies
 install:
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-  - docker build --rm=false -f Dockerfile.base . --tag ${TRAVIS_REPO_SLUG}:base # keep intermediate images
+  - docker build -f Dockerfile.deps . --tag ${TRAVIS_REPO_SLUG}:deps
+  - docker push ${TRAVIS_REPO_SLUG}:deps
+  - docker build -f Dockerfile.base . --tag ${TRAVIS_REPO_SLUG}:base 
   - docker push ${TRAVIS_REPO_SLUG}:base
   - echo -e "FROM ${TRAVIS_REPO_SLUG}:base\nRUN apt -y install xvfb firefox" > Dockerfile.base-test.tmp
-  - docker build --rm=false -f Dockerfile.base-test.tmp . --tag ${TRAVIS_REPO_SLUG}:base-test # keep intermediate images
+  - docker build --rm=false -f Dockerfile.base-test.tmp . --tag ${TRAVIS_REPO_SLUG}:base-test 
   - docker push ${TRAVIS_REPO_SLUG}:base-test
   - echo -e "FROM ${TRAVIS_REPO_SLUG}:base\nCMD [\"/sbin/my_init\"]" > Dockerfile.tmp
 
