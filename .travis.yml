@@ -17,10 +17,10 @@ before_install:
   - docker pull ${TRAVIS_REPO_SLUG}:base-test || true  # attempt to retrieve cached images
 install:
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-  - docker build -rm false -f Dockerfile.base . --tag ${TRAVIS_REPO_SLUG}:base # keep intermediate images
+  - docker build -rm=false -f Dockerfile.base . --tag ${TRAVIS_REPO_SLUG}:base # keep intermediate images
   - docker push ${TRAVIS_REPO_SLUG}:base
   - echo -e "FROM ${TRAVIS_REPO_SLUG}:base\nRUN apt -y install xvfb firefox" > Dockerfile.base-test.tmp
-  - docker build -rm false -f Dockerfile.base-test.tmp . --tag ${TRAVIS_REPO_SLUG}:base-test # keep intermediate images
+  - docker build -rm=false -f Dockerfile.base-test.tmp . --tag ${TRAVIS_REPO_SLUG}:base-test # keep intermediate images
   - docker push ${TRAVIS_REPO_SLUG}:base-test
   - echo -e "FROM ${TRAVIS_REPO_SLUG}:base\nCMD [\"/sbin/my_init\"]" > Dockerfile.tmp
 
