@@ -1,3 +1,4 @@
+# image based on https://github.com/jhpoelen/taxonworks-base
 FROM jhpoelen/taxonworks-base
 MAINTAINER Matt Yoder
 ENV LAST_FULL_REBUILD 2018-05-10
