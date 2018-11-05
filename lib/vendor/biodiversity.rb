@@ -2,7 +2,11 @@ module TaxonWorks
   module Vendor
 
     # Wraps the biodiversity gem (https://github.com/GlobalNamesArchitecture/biodiversity)
-    # Links parsed string results to Protonyms/Combinations in TaxonWorks
+    # Links parsed string results to Protonyms/Combinations in TaxonWorks.
+    #   a = TaxonWorks::Vendor::Biodiversity::Result.new 
+    #   a.name = 'Aus bus'
+    #   a.parse
+    #
     module Biodiversity
       
       RANK_MAP = {
@@ -125,7 +129,9 @@ module TaxonWorks
 
         # @return [String, nil]
         def species
-          detail[:species] && detail[:species][:string]
+          a = detail
+          (a[:species] && a[:species][:string]) ||
+            (a[:annotation_identification] && a[:species] && a[:species][:species] && a[:species][:species][:string]) || nil
         end
 
         # @return [String, nil]
@@ -262,6 +268,7 @@ module TaxonWorks
         end
 
         # @return [ String, false ]
+        #   a wrapper on string returning methods
         # @param rank [Symbol, String] 
         #   rank is one of `genus`, `subgenus`, `species, `subspecies`, `variety`, `form`
         def string(rank = nil)
@@ -419,10 +426,8 @@ module TaxonWorks
           ).all.to_a
 
           h[:original_combination] = Protonym.where(project_id: project_id). 
-          where(
-            'cached_original_combination = ?', 
-            Utilities::Strings.nil_wrap('<i>', name_without_author_year, '</i>')
-          ).all.to_a if parseable
+            where( cached_original_combination: name_without_author_year
+                 ).all.to_a if parseable
 
           h
         end

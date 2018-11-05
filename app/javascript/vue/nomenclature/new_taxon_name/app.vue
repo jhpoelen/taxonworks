@@ -39,7 +39,7 @@
           </div>
           <div
             class="new-taxon-name-block"
-            v-if="showForThisGroup(['SpeciesGroup','GenusGroup'], getTaxon)">
+            v-if="showForThisGroup(['SpeciesGroup','GenusGroup', 'SpeciesAndInfraspeciesGroup'], getTaxon)">
             <spinner
               :show-spinner="false"
               :show-legend="false"
@@ -47,7 +47,7 @@
             <block-layout
               anchor="original-combination"
               v-help.section.originalCombination.container>
-              <h3 slot="header">Original Combination</h3>
+              <h3 slot="header">Original combination and classification</h3>
               <div slot="body">
                 <pick-original-combination/>
               </div>

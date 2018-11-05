@@ -5,8 +5,14 @@
         class="pages"
         type="text"
         placeholder="Pages"
-        @input="changePage"
+        @input="updatePage"
         v-model="citation.pages">
+    </td>
+    <td>
+      <input 
+        v-model="citation.is_original"
+        @change="updateCitation"
+        type="checkbox">
     </td>
     <td>
       <span>
@@ -14,7 +20,14 @@
           v-html="citation.citation_object.object_tag"
           @click="showObject()"/> 
         {{ legend }}
+        <span 
+          v-if="isInvalid"
+          data-icon="warning"
+          title="Invalid"/>
       </span>
+    </td>
+    <td>
+      <span v-html="citation.citation_object.type"/>
     </td>
     <td>
       <radial-annotator :global-id="citation.citation_object.global_id"/>
@@ -36,8 +49,10 @@
 
   import RadialAnnotator from 'components/annotator/annotator'
   import OtuRadial from 'components/otu/otu'
+  import extendedRow from './extendedRow.js'
 
   export default {
+    mixins: [extendedRow],
     components: {
       RadialAnnotator,
       OtuRadial
@@ -53,63 +68,43 @@
         pages: undefined,
         autoSave: undefined,
         time: 3000,
-        legend: ''
+        legend: '',
+        nameStatus: ''
+      }
+    },
+    computed: {
+      isInvalid() {
+        return (this.nameStatus == 'invalid')
       }
     },
     mounted() {
-      this.getNameData()
+      this.nameAuthorYear();
+      this.nameValidity();
     },
     methods: {
       showObject() {
         window.open('/tasks/nomenclature/browse/' + this.citation.citation_object_id, '_blank');
       },
-      getNameData: function () {
-        let legend = ' invalid';     // preset status part of legend
-        this.$http.get(this.citation.citation_object.object_url).then(response => {
-          let taxon = response.body;
-          let invalid = (taxon.id != taxon.cached_valid_taxon_name_id);
-          if (invalid) {
-            if (taxon.type == 'Combination') {
-              legend = ' combination'
-            }
-          }
-          else {
-            legend = ' ' + taxon.rank
-          }
+      nameAuthorYear() {
+          let taxon = this.citation.citation_object;
           let authorYear = ' ' + taxon.cached_author_year;
           if (taxon.cached_author_year == null) {
             authorYear = '';
           }
-          legend = authorYear + legend;
-          this.legend = legend;
-        })
-      },
-      changePage() {
-        let that = this;
-        if (this.autoSave) {
-          clearTimeout(this.autoSave)
-        }
-        this.autoSave = setTimeout(() => {
-          that.$http.patch('/citations/' + this.citation.id + '.json', {citation: this.citation}).then(response => {
-            TW.workbench.alert.create('Citation was successfully updated.', 'notice')
-          })
-        }, this.time)
-      },
-      removeMe() {
-        if (window.confirm(`You're about to delete this citation record. Are you sure want to proceed?`)) {
-          this.$http.delete('/citations/' + this.citation.id + '.json').then(response => {
-            this.$emit('delete', this.citation);
-            TW.workbench.alert.create('Citation was successfully destroyed.', 'notice')
-          }, reject => {
-            TW.workbench.alert.create('Citation was not destroyed, ' + reject.statusText, 'notice')
-          })
-        }
+        this.legend = authorYear;
+        },
+      nameValidity() {
+        let taxon = this.citation.citation_object;
+        this.nameStatus = (taxon.id == taxon.cached_valid_taxon_name_id) ? 'valid' : 'invalid';
       }
     }
   }
 </script>
 <style lang="scss" module>
   .pages {
-    width: 140px;
+    width: 80px;
+  }
+  .validity {
+    width: 40px;
   }
 </style>
