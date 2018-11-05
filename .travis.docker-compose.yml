@@ -5,7 +5,7 @@ version: "2.1"
 services:
   app:
     image: jhpoelen/taxonworks:base
-    volumes: # mount root directory from this machine to the container itself (live development, e.g. Rails sees changes to files without rebuilding container0
+    volumes:
       - ./.travis.test.in.container.sh:/app/test.sh
       - ./spec:/app/spec
       - ./config/database.yml.docker.compose.example:/app/config/database.yml
