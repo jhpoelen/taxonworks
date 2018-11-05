@@ -4,7 +4,7 @@
 version: "2.1"
 services:
   app:
-    image: jhpoelen/taxonworks:base
+    image: jhpoelen/taxonworks:base-test
     volumes:
       - ./.travis.test.in.container.sh:/app/test.sh
       - ./spec:/app/spec
