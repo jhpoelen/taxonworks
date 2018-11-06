@@ -21,10 +21,11 @@ jobs:
       script: 
         - docker build -f Dockerfile.base . --tag ${TRAVIS_REPO_SLUG}:${TRAVIS_BRANCH}-base
         - docker push ${TRAVIS_REPO_SLUG}:${TRAVIS_BRANCH}-base
+        - echo -e "FROM ${TRAVIS_REPO_SLUG}:${TRAVIS_BRANCH}-base\nRUN apt -y install xvfb firefox" > Dockerfile.base-test.tmp
+        - docker build --rm=false -f Dockerfile.base-test.tmp . --tag ${TRAVIS_REPO_SLUG}:${TRAVIS_BRANCH}-base-test
+        - docker push ${TRAVIS_REPO_SLUG}:${TRAVIS_BRANCH}-base-test
     - stage: test
       script:
-        - echo -e "FROM ${TRAVIS_REPO_SLUG}:${TRAVIS_BRANCH}-base\nRUN apt -y install xvfb firefox" > Dockerfile.base-test.tmp
-        - docker build --rm=false -f Dockerfile.base-test.tmp . --tag ${TRAVIS_REPO_SLUG}:${TRAVIS_BRANCH}-base-test 
         - docker-compose --version
         - docker-compose -f .travis.docker-compose.yml up --force-recreate --abort-on-container-exit --exit-code-from app --renew-anon-volumes
     - stage: deploy
