@@ -18,18 +18,25 @@ before_install:
   - sudo mv docker-compose /usr/local/bin
 install:
   - mkdir -p tmp/cache/docker
-  - if [ -f tmp/cache/docker/deps.tar.gz ]; then gunzip tmp/cache/docker/deps.tar.gz | docker load; fi;
-  - docker build -f Dockerfile.deps . --tag ${TRAVIS_REPO_SLUG}:deps
-  - docker save ${TRAVIS_REPO_SLUG}:deps | gzip > tmp/cache/docker/deps.tar.gz 
-  - docker build -f Dockerfile.base . --tag ${TRAVIS_REPO_SLUG}:base 
-  - echo -e "FROM ${TRAVIS_REPO_SLUG}:base\nRUN apt -y install xvfb firefox" > Dockerfile.base-test.tmp
-  - docker build --rm=false -f Dockerfile.base-test.tmp . --tag ${TRAVIS_REPO_SLUG}:base-test 
-  - echo -e "FROM ${TRAVIS_REPO_SLUG}:base\nCMD [\"/sbin/my_init\"]" > Dockerfile.tmp
-  - docker build -f Dockerfile.tmp . --tag ${TRAVIS_REPO_SLUG}:${TRAVIS_BRANCH}
-script:
-  - docker-compose --version
-  - docker-compose -f .travis.docker-compose.yml up --force-recreate --abort-on-container-exit --exit-code-from app --renew-anon-volumes 
-after_success:
-  - docker images
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-  - docker push ${TRAVIS_REPO_SLUG}:${TRAVIS_BRANCH}
+jobs:
+  include:
+    - stage: build
+      script: 
+        - docker build -f Dockerfile.deps . --tag ${TRAVIS_REPO_SLUG}:deps
+        - docker build -f Dockerfile.base . --tag ${TRAVIS_REPO_SLUG}:base 
+        - docker push ${TRAVIS_REPO_SLUG}:base 
+        - echo -e "FROM ${TRAVIS_REPO_SLUG}:base\nRUN apt -y install xvfb firefox" > Dockerfile.base-test.tmp
+        - docker build --rm=false -f Dockerfile.base-test.tmp . --tag ${TRAVIS_REPO_SLUG}:base-test 
+        - docker push ${TRAVIS_REPO_SLUG}:base-test 
+    - stage: test
+      script:
+        - docker pull ${TRAVIS_REPO_SLUG}:base-test
+        - docker-compose --version
+        - docker-compose -f .travis.docker-compose.yml up --force-recreate --abort-on-container-exit --exit-code-from app --renew-anon-volumes
+    - stage: deploy
+      script:
+        - echo -e "FROM ${TRAVIS_REPO_SLUG}:base\nCMD [\"/sbin/my_init\"]" > Dockerfile.tmp
+        - docker build -f Dockerfile.tmp . --tag ${TRAVIS_REPO_SLUG}:${TRAVIS_BRANCH}
+        - docker images
+        - docker push ${TRAVIS_REPO_SLUG}:${TRAVIS_BRANCH}
