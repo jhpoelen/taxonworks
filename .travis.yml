@@ -16,7 +16,6 @@ before_install:
   - curl -L https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-`uname -s`-`uname -m` > docker-compose
   - chmod +x docker-compose
   - sudo mv docker-compose /usr/local/bin
-  - docker pull ${TRAVIS_REPO_SLUG}:deps || true # attempt to retrieve cached image with dependencies
 install:
   - mkdir -p tmp/cache/docker
   - if [ -f tmp/cache/docker/deps.tar.gz ]; then gunzip tmp/cache/docker/deps.tar.gz | docker load; fi;
