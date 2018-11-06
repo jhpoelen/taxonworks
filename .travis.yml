@@ -24,7 +24,7 @@ jobs:
     - stage: build
       script: 
         - if [ -f tmp/cache/docker/deps.tar.gz ]; then gzip -dc tmp/cache/docker/deps.tar.gz | docker load; fi;
-        - docker build -f Dockerfile.deps . --tag ${TRAVIS_REPO_SLUG}:deps
+        - docker build --rm=false -f Dockerfile.deps . --tag ${TRAVIS_REPO_SLUG}:deps # do not remove intermediate layers
         - docker save ${TRAVIS_REPO_SLUG}:deps | gzip > tmp/cache/docker/deps.tar.gz
     - stage: test
       script:
